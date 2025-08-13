@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div>封装组件</div>
+        <div>封装组件121</div>
         <tag :text="message1" :color="color1"></tag>
         <tag :text="message2" :color="color2"></tag>
     </div>
