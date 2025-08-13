@@ -1,45 +1,44 @@
 name: deploy
 on:
   push:
-    branches: [master] # main 分支有 push 时触发
-    paths-ignore:   # 下列文件的变更不触发部署，可以自行添加
+    branches: [master]
+    paths-ignore:
       - README.md
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      # 下载源码
       - name: Checkout
-        uses: actions/checkout@v4  # 使用最新版本
+        uses: actions/checkout@v4
 
-      # 设置Node.js环境
+      # 1. 先安装 pnpm（关键步骤，解决命令找不到的问题）
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8  # 指定具体版本，避免兼容性问题
+
+      # 2. 再设置 Node.js，并关联 pnpm 缓存
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-          cache: 'pnpm'  # 缓存pnpm依赖
+          cache: 'pnpm'  # 此时缓存才会生效
 
-      # 安装pnpm
-      - name: Install pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: latest
-
-      # 安装依赖
+      # 3. 安装依赖（现在 pnpm 已可用）
       - name: Install dependencies
         run: pnpm install
 
-      # 打包构建
+      # 4. 打包构建
       - name: Build
         run: pnpm run build
 
-      # 部署到 GitHub pages
+      # 5. 部署到 GitHub Pages
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4  # 使用最新版本
+        uses: peaceiris/actions-gh-pages@v4
         with:
           branch: gh-pages
           publish_dir: ./dist
           github_token: ${{ secrets.CICDDEMO }}
           user_name: ${{ secrets.MY_USER_NAME }}
           user_email: ${{ secrets.MY_USER_EMAIL }}
-          commit_message: 自动部署 ${{ github.sha }}  # 包含提交哈希，便于追溯
+          commit_message: 自动部署 ${{ github.sha }}
