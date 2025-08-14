@@ -1,7 +1,7 @@
 <template>
     <div class="login-box">
         <div class="login-form">
-            <h1>管理</h1>
+            <h1>测试</h1>
             <el-form show-message :model="userInfo" :rules="rules" center class="login-info">
                 <el-form-item prop="username">
                     <el-input
